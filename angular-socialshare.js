@@ -74,8 +74,9 @@ angular.module('djds4rce.angular-socialshare', [])
 					scope.translate = 'Share';
 				attr.$observe('url', function() {
 					if (attr.shares && attr.url) {
-						$http.get('http://graph.facebook.com/?id=' + attr.url + '&format=json', {withCredentials: false}).success(function(res) {
-							var count = (res && res.share && res.share.share_count) ?res.share.share_count.toString() : 0;
+						$http.get('http://graph.facebook.com/?id=' + attr.url + '&format=json', { withCredentials: false }).then(function (response) {
+							var res = response.data;
+							var count = (res && res.share && res.share.share_count) ? res.share.share_count.toString() : 0;
 							var decimal = '';
 							if (count.length > 6) {
 								if (count.slice(-6, -5) != "0") {
@@ -91,7 +92,7 @@ angular.module('djds4rce.angular-socialshare', [])
 								count = count + decimal + 'k';
 							}
 							scope.shares = count;
-						}).error(function() {
+						}, function () {
 							scope.shares = 0;
 						});
 					}
@@ -141,7 +142,9 @@ angular.module('djds4rce.angular-socialshare', [])
 					scope.translate = 'Share';
 				attr.$observe('url', function() {
 					if (attr.shares && attr.url) {
-						$http.get('https://api.facebook.com/method/links.getStats?urls=' + attr.url + '&format=json', {withCredentials: false}).success(function(res) {
+						$http.get('https://api.facebook.com/method/links.getStats?urls=' + attr.url + '&format=json', { withCredentials: false }).then(function (response) {
+							var res = response.data;
+
 							var count = res[0] ? res[0].total_count.toString() : 0;
 							var decimal = '';
 							if (count.length > 6) {
@@ -158,7 +161,7 @@ angular.module('djds4rce.angular-socialshare', [])
 								count = count + decimal + 'k';
 							}
 							scope.shares = count;
-						}).error(function() {
+						}, function () {
 							scope.shares = 0;
 						});
 					}
@@ -188,7 +191,7 @@ angular.module('djds4rce.angular-socialshare', [])
 					if (attr.url) {
 						$timeout(function() {
 							element[0].innerHTML = '';
-							twttr.widgets.createShareButton(
+							window.twttr && window.twttr.widgets.createShareButton(
 								attr.url,
 								element[0],
 								function() {}, {
@@ -235,9 +238,10 @@ angular.module('djds4rce.angular-socialshare', [])
 					scope.translate = 'Share';
 				var renderLinkedinButton = debounce(function() {
 					if (attr.shares && attr.url) {
-						$http.jsonp('https://www.linkedin.com/countserv/count/share?url=' + attr.url + '&callback=JSON_CALLBACK&format=jsonp').success(function(res) {
+						$http.jsonp('https://www.linkedin.com/countserv/count/share?url=' + attr.url + '&callback=JSON_CALLBACK&format=jsonp').then(function (response) {
+							var res = response.data;
 							scope.shares = res.count.toLocaleString();
-						}).error(function() {
+						}, function () {
 							scope.shares = 0;
 						});
 					}
